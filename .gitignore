@@ -28,6 +28,8 @@ log.txt
 /tmp
 /out-tsc
 /bazel-out
+/src/.env
+/src/environments/environment.ts
 
 # Node
 /node_modules
