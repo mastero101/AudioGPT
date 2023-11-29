@@ -8,8 +8,12 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'recording',
     pathMatch: 'full'
+  },
+  {
+    path: 'recording',
+    loadChildren: () => import('./recording/recording.module').then( m => m.RecordingPageModule)
   },
 ];
 

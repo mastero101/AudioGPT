@@ -1,0 +1,28 @@
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+ion-title {
+  text-align: center;
+}
+
+ion-button {
+  font-size: 2em;
+  margin: 0.5em;
+  width: 3em; /* Ajusta el ancho del botón según sea necesario */
+  height: 3em; /* Ajusta la altura del botón según sea necesario */
+  border-radius: 50%; /* Hace que el botón sea redondo */
+}
+
+/* Añade estilos específicos para dispositivos móviles */
+@media only screen and (max-width: 600px) {
+  ion-button {
+    font-size: 2.5em;
+    width: 2.5em;
+    height: 2.5em;
+    margin: 0.2em;
+  }
+}
