@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { OpeniaService } from '../openia.service';
 
+import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-recording',
   templateUrl: './recording.page.html',
@@ -11,11 +13,18 @@ export class RecordingPage {
   private audioChunks: Blob[] = [];
   isRecording = false;
   audioFile: string | null = null;
+  chatMessages: { role: string, content: string }[] = [];
 
-  constructor(private openiaService: OpeniaService) {}
+  transcriptionRole = 'Me';
+  gptRole = 'GPT';
+
+  constructor(private openiaService: OpeniaService, private cdr: ChangeDetectorRef) {}
 
   async startRecording() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    // Reiniciamos audioChunks al inicio de una nueva grabación
+    this.audioChunks = [];
 
     this.mediaRecorder = new MediaRecorder(stream);
 
@@ -25,42 +34,41 @@ export class RecordingPage {
       }
     };
 
-    this.mediaRecorder.onstop = () => {
+    this.mediaRecorder.onstop = async () => {
       const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-      // Ahora puedes guardar o enviar este Blob a tu servicio de OpenAI
-      console.log('Grabación completada:', audioBlob);
+
+      // Verificamos el tamaño y tipo del blob antes de enviarlo a OpenAI
+      console.log('Tamaño del blob:', audioBlob.size);
+      console.log('Tipo del blob:', audioBlob.type);
+
+      try {
+        // Ahora puedes enviar el blob a OpenAI
+        const transcription = await this.openiaService.sendAudioToOpenAI(audioBlob);
+
+        this.chatMessages.push({ role: 'Me', content: transcription });
+
+        // Enviar la transcripción a OpenAI para obtener la respuesta de ChatGPT
+        const response = await this.openiaService.sendTextToOpenAI(transcription);
+
+        // Agregar tanto la transcripción como la respuesta al array chatMessages
+        this.chatMessages.push({ role: 'GPT', content: response });
+
+        // Forzar la actualización de la vista
+        this.cdr.detectChanges();
+      } catch (error: any) {
+        console.error('Error al enviar el archivo de audio a OpenAI:', error.message);
+      }
     };
 
     this.mediaRecorder.start();
     this.isRecording = true;
   }
-
+  
   async stopRecording() {
     if (this.mediaRecorder && this.isRecording) {
       this.mediaRecorder.stop();
       this.isRecording = false;
-  
-      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-  
-      try {
-        // Guardar el archivo de audio
-        const audioFilePath = await this.openiaService.saveAudio(audioBlob);
-  
-        // Enviar la ruta del archivo de audio a OpenAI
-        const transcription = await this.openiaService.sendAudioToOpenAI(audioFilePath);
-        console.log('Transcripción completa:', transcription);
-  
-        // Puedes asignar la ruta del archivo a this.audioFile si es necesario
-        this.audioFile = audioFilePath;
-      } catch (error: any) {
-        console.error('Error al enviar el archivo de audio a OpenAI:', error.message);
-      }
     }
   }
 
-  async playLastRecording() {
-    if (this.audioFile) {
-      this.openiaService.playAudio(this.audioFile); // Utiliza tu función playAudio
-    }
-  }
 }

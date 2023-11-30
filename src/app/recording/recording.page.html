@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Grabación de Audio
+      GPT Asistente Audio
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,29 +9,21 @@
 <ion-content class="ion-padding">
   <div class="chat-container">
     <ion-list>
-      <!-- Mostrar mensajes del chat aquí -->
-      <!-- <ion-item *ngFor="let message of chatMessages"> -->
-      <ion-item>
-        <!-- {{ message }} -->
+      <ion-item *ngFor="let chatMessage of chatMessages">
+        <div [ngClass]="{'chat-bubble': true, 'user-bubble': chatMessage.role === 'user', 'gpt-bubble': chatMessage.role === 'GPT'}">
+          {{ chatMessage.content }}
+        </div>
       </ion-item>
     </ion-list>
   </div>
 
   <div class="center-container">
-    <!-- Botón circular con el símbolo de micrófono -->
     <ion-button shape="round" (click)="startRecording()" *ngIf="!isRecording">
       <ion-icon name="mic"></ion-icon>
     </ion-button>
 
-    <!-- Botón de detener grabación -->
     <ion-button shape="round" (click)="stopRecording()" *ngIf="isRecording">
       <ion-icon name="stop"></ion-icon>
     </ion-button>
-
-    <!-- Botón para reproducir la última grabación -->
-    <ion-button shape="round" (click)="playLastRecording()" *ngIf="!isRecording && audioFile !== null">
-      <ion-icon name="play"></ion-icon>
-    </ion-button>
   </div>
 </ion-content>
-

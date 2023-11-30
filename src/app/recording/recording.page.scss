@@ -12,9 +12,9 @@ ion-title {
 ion-button {
   font-size: 2em;
   margin: 0.5em;
-  width: 3em; /* Ajusta el ancho del botón según sea necesario */
-  height: 3em; /* Ajusta la altura del botón según sea necesario */
-  border-radius: 50%; /* Hace que el botón sea redondo */
+  width: 3em; 
+  height: 3em;
+  border-radius: 50%; 
 }
 
 /* Añade estilos específicos para dispositivos móviles */
@@ -25,4 +25,24 @@ ion-button {
     height: 2.5em;
     margin: 0.2em;
   }
+}
+
+.chat-bubble {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  display: inline-block;
+  max-width: 99%;
+}
+
+.user-bubble {
+  background-color: #4CAF50;
+  color: white;
+  font-size: 24px;
+}
+
+.gpt-bubble {
+  background-color: #008CBA; 
+  color: white;
+  font-size: 20px;
 }
