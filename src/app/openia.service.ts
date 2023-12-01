@@ -59,12 +59,55 @@ export class OpeniaService {
       const generatedText = openAiResponse.data.choices[0].message.content;
 
       console.log('Respuesta de OpenAI:', generatedText);
+
+      // Generar voz a partir del texto
+      await this.reciveAudioFromOpenAI(generatedText);
   
       return generatedText;
     } catch (error: any) {
       console.error('Error al enviar datos de audio a OpenAI:', error.message);
       throw error;
     }
+  }
+
+  async reciveAudioFromOpenAI(text: string): Promise<void> {
+    try {
+      const response = await axios.post(
+        'https://api.openai.com/v1/audio/speech',
+        {
+          model: 'tts-1',
+          voice: 'alloy',
+          input: text,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.openaiApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          responseType: 'arraybuffer',
+        }
+      );
+  
+      const buffer = new Uint8Array(response.data);
+      const audioBlob = new Blob([buffer], { type: 'audio/wav' });
+
+      // Reproducir el audio
+      this.playAudioBlob(audioBlob);
+
+      console.log('Speech generated successfully');
+    } catch (error: any) {
+      console.error('Error generating speech:', error.message);
+      throw error;
+    }
+  }
+
+  playAudioBlob(audioBlob: Blob): void {
+    const sound = new Howl({
+      src: [URL.createObjectURL(audioBlob)],
+      format: ['wav'], // Ajusta el formato según sea necesario
+    });
+
+    sound.play();
   }
   
   playAudio(audioFilePath: string): void {
