@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="chat-container">
+  <ion-card class="chat-container">
     <ion-list>
       <ion-item *ngFor="let chatMessage of chatMessages">
         <div [ngClass]="{'chat-bubble': true, 'user-bubble': chatMessage.role === 'user', 'gpt-bubble': chatMessage.role === 'GPT'}">
@@ -15,7 +15,7 @@
         </div>
       </ion-item>
     </ion-list>
-  </div>
+  </ion-card>
 
   <div *ngIf="isLoading" class="loading-bar"></div>
 
