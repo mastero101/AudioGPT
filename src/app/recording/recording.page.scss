@@ -46,3 +46,19 @@ ion-button {
   color: white;
   font-size: 20px;
 }
+
+.loading-bar {
+  height: 5px;
+  width: 100%;
+  background-color: #2196F3; /* Cambia el color según tus preferencias */
+  animation: loading-animation 2s linear infinite; /* Ajusta la duración de la animación según sea necesario */
+}
+
+@keyframes loading-animation {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}

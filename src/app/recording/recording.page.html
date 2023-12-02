@@ -17,8 +17,10 @@
     </ion-list>
   </div>
 
+  <div *ngIf="isLoading" class="loading-bar"></div>
+
   <div class="center-container">
-    <ion-button shape="round" (click)="startRecording()" *ngIf="!isRecording">
+    <ion-button shape="round" (click)="startRecording()" *ngIf="!isRecording && !isLoading">
       <ion-icon name="mic"></ion-icon>
     </ion-button>
 
