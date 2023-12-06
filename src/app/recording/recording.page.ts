@@ -92,4 +92,16 @@ export class RecordingPage {
        // Asegurarse de que isLoading se restablece al detener la grabación
     }
   }
+
+  downloadLog() {
+    const logText = this.chatMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
+    const blob = new Blob([logText], { type: 'text/plain' });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'chat_log.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
 }

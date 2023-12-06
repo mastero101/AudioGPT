@@ -27,5 +27,9 @@
     <ion-button shape="round" (click)="stopRecording()" *ngIf="isRecording">
       <ion-icon name="stop"></ion-icon>
     </ion-button>
+
+    <ion-button shape="round" (click)="downloadLog()" *ngIf="!isRecording && !isLoading">
+      <ion-icon name="download"></ion-icon>
+    </ion-button>
   </div>
 </ion-content>
