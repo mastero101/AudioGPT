@@ -101,6 +101,29 @@ export class OpeniaService {
     }
   }
 
+  async sendAudioFileToWhisper(audioFile: File): Promise<string> {
+    try {
+      const formData = new FormData();
+      formData.append('file', audioFile);
+      formData.append('model', 'whisper-1');
+      formData.append('language', 'es');
+  
+      const response: AxiosResponse = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${this.openaiApiKey}`,
+        },
+      });
+  
+      console.log('Transcripcion:', response.data.text);
+      
+      return response.data.text;
+    } catch (error: any) {
+      console.error('Error al enviar datos de audio a OpenAI:', error.message);
+      throw error;
+    }
+  }
+
   playAudioBlob(audioBlob: Blob): void {
     const sound = new Howl({
       src: [URL.createObjectURL(audioBlob)],

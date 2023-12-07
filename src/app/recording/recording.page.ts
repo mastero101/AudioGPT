@@ -93,6 +93,34 @@ export class RecordingPage {
     }
   }
 
+  async handleFileInputChange(event: any) {
+    const file = event.target.files[0];
+
+    if (file) {
+      this.isLoading = true;
+
+      try {
+        const transcription = await this.openiaService.sendAudioFileToWhisper(file);
+
+        this.chatMessages.push({ role: 'Me', content: transcription });
+
+        // Enviar la transcripción a OpenAI para obtener la respuesta de ChatGPT
+        const response = await this.openiaService.sendTextToOpenAI(transcription);
+
+        // Agregar tanto la transcripción como la respuesta al array chatMessages
+        this.chatMessages.push({ role: 'GPT', content: response });
+        this.isLoading = false;
+
+        // Forzar la actualización de la vista dentro de la zona de Angular
+        this.ngZone.run(() => {
+          this.cdr.detectChanges();
+        });
+      } catch (error: any) {
+        console.error('Error al enviar el archivo de audio a OpenAI:', error.message);
+      }
+    }
+  }
+
   downloadLog() {
     const logText = this.chatMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
     const blob = new Blob([logText], { type: 'text/plain' });
