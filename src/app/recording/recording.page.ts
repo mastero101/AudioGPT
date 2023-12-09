@@ -121,6 +121,55 @@ export class RecordingPage {
     }
   }
 
+  async takePhoto() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.createElement('video');
+      document.body.appendChild(video);
+      video.srcObject = stream;
+  
+      return new Promise<Blob>((resolve) => {
+        video.onloadedmetadata = () => {
+          video.play();
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const context = canvas.getContext('2d');
+          context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            }
+          });
+          document.body.removeChild(video);
+        };
+      });
+    } catch (error: any) {
+      console.error('Error al acceder a la cámara:', error.message);
+      throw error;
+    }
+  }
+  
+  async handleTakePhoto() {
+    this.isLoading = true;
+  
+    try {
+      const imageBlob = await this.takePhoto();
+      const response = await this.openiaService.sendImageToOpenAI(imageBlob);
+  
+      this.chatMessages.push({ role: 'Me', content: response });
+  
+      // Forzar la actualización de la vista después de recibir la respuesta de ChatGPT
+      this.ngZone.run(() => {
+        this.cdr.detectChanges();
+      });
+    } catch (error: any) {
+      console.error('Error al manejar la foto:', error.message);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
   downloadLog() {
     const logText = this.chatMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
     const blob = new Blob([logText], { type: 'text/plain' });

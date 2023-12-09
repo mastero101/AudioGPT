@@ -124,6 +124,52 @@ export class OpeniaService {
     }
   }
 
+  async sendImageToOpenAI(imageBlob: Blob): Promise<string> {
+    try {
+      const formData = new FormData();
+      formData.append('file', imageBlob, 'image_input.jpg');
+  
+      const response = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model: 'gpt-4-vision-preview',
+          messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: 'Que ves en esta imagen?',
+                },
+                {
+                  type: 'image',
+                  image: {
+                    url: URL.createObjectURL(imageBlob),
+                  },
+                },
+              ],
+            },
+          ],
+          max_tokens: 300,
+        },
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${this.openaiApiKey}`,
+          },
+        }
+      );
+  
+      const generatedText = response.data.choices[0].message.content;
+  
+      console.log('Respuesta de OpenAI:', generatedText);
+      return generatedText;
+    } catch (error: any) {
+      console.error('Error al enviar datos de imagen a OpenAI:', error.message);
+      throw error;
+    }
+  }
+
   playAudioBlob(audioBlob: Blob): void {
     const sound = new Howl({
       src: [URL.createObjectURL(audioBlob)],
