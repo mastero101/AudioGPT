@@ -132,14 +132,5 @@ export class OpeniaService {
 
     sound.play();
   }
-  
-  playAudio(audioFilePath: string): void {
-    const sound = new Howl({
-      src: [audioFilePath],
-      format: ['wav'], // Ajusta el formato según sea necesario
-    });
-
-    sound.play();
-  }
 
 }
